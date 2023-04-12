@@ -38,7 +38,7 @@ class Home extends React.Component {
         <div className="main">
           <div className="main-text">
             <h1>Social Genie</h1>
-            <h1>Your one stop solution to all your content management needs</h1>
+            <h1>Your one stop solution to all your social media handles</h1>
           </div>
           <div className="main-img">
             <div className="img">

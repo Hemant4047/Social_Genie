@@ -14,7 +14,7 @@
 
 .instagram-card {
   width: 100%;
-  height: 20rem;
+  height: 24rem;
   background-color: #70429f;
   display: flex;
   flex-direction: column;
@@ -23,8 +23,14 @@
   border-radius: 5px;
 }
 
+.instagram-card:hover {
+  cursor: pointer;
+}
+
 .instagram-card img {
-  width: 80%;
+  width: 90%;
+  height: 15rem;
+  object-fit: contain;
 }
 
 .instagram-stats {
@@ -42,6 +48,13 @@
 .instagram-stats h5 {
   font-size: 0.85rem;
   font-weight: 600;
+}
+
+.instagram-caption {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 340px;
 }
 
 @media only screen and (max-width: 1261px) {

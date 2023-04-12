@@ -49,8 +49,7 @@
 
 .flex div:nth-child(2) {
   text-align: center;
-
-  justify-content: space-between;
+  /* justify-content: space-between; */
 }
 
 .flex div:nth-child(1) {
@@ -67,8 +66,32 @@
   margin-bottom: 3rem;
 }
 
-.hover_pointer {
+.pointer {
   cursor: pointer;
+}
+
+.status {
+  display: inline-block;
+}
+
+.status > span {
+  margin-left: 2.5rem;
+  font-size: small;
+  font-weight: lighter;
+}
+
+.icon-status {
+  display: flex;
+  width: 46%;
+  justify-content: space-between;
+}
+
+._icon {
+  vertical-align: middle;
+}
+
+.red {
+  color: red;
 }
 
 @media only screen and (max-width: 950px) {

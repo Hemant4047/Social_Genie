@@ -1,62 +1,65 @@
+// We are using Login-test facebook app.
 const express = require("express");
+const multer = require("multer");
 const cors = require("cors");
-const createError = require("http-errors");
-
-const rateLimiter = require("./middleware/rateLimiter");
-
+const fs = require("fs");
+const path = require("path");
 require("dotenv").config();
-// require("./db/config");
+const createError = require("http-errors");
+let { setFormData, setNewPhoto } = require("./models/formData");
 
-const session = require("express-session");
-const passport = require("passport");
-var SQLiteStore = require("connect-sqlite3")(session);
+const fb_routeHandler = require("./routes/facebook/oauth_fb");
+const linkedin_routeHandler = require("./routes/oauth_linkedin");
+const twitter_routeHandler = require("./routes/oauth_twitter");
 
-const authRoute = require("./routes/auth");
-const oauthRouteHandler = require("./routes/facebook/oauth_fb");
-const { default: axios } = require("axios");
-
+const upload = multer({ dest: "uploads/" });
 const app = express();
+
+// should be un-commented when frontend is making requests
 app.use(cors({ origin: "http://localhost:5001", credentials: true }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // To parse incoming form data
-app.use(
-  session({
-    secret: "keyboard cat",
-    resave: false,
-    saveUninitialized: false,
-    store: new SQLiteStore({ db: "sessions.db", dir: "./var/db" }),
-  })
-);
-app.use(passport.authenticate("session"));
 
-// app.use(rateLimiter);
-
-// Setting end points for api
-// app.use("/auth", authRoute);
+// Old JSON parsing middlewares
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true })); // To parse incoming form data
 
 // OAuth routes
-app.use("/oauth", oauthRouteHandler);
+app.use("/oauth/facebook", fb_routeHandler);
 
-app.get("/login/success", async function (req, res) {
-  console.log("/login/success", req.user);
-  if (req.user) {
-    let user_email;
-    await axios
-      .get(
-        `https://graph.facebook.com/v16.0/me?fields=email&access_token=${req.user.accessToken}`
-      )
-      .then((response) => {
-        user_email = response.data.email;
-      });
-    let userObj = { ...req.user, email: user_email };
-    return res.status(201).json({ user: userObj });
+app.use("/oauth/linkedin", linkedin_routeHandler);
+
+app.use("/oauth/twitter", twitter_routeHandler);
+
+// Upload the form data here and then call fb and ig upload separately.
+app.post("/upload", upload.single("photo"), function (req, res, next) {
+  console.log("POST /upload");
+
+  if (req.file !== undefined) {
+    console.log("POST /upload Successfully saved the photo");
+    try {
+      fs.renameSync(
+        path.join(__dirname, "uploads", req.file.filename),
+        path.join(__dirname, "uploads", "sample.jpg")
+      );
+      setNewPhoto(true);
+    } catch (err) {
+      console.log("Upload File Rename Error", err);
+      res.send({ success: false });
+    }
+  } else {
+    console.log("POST /upload No File uploaded");
+    setNewPhoto(false);
   }
-  res.json({ user: null });
+
+  console.log("POST /upload Form data: ", req.body);
+  setFormData(req.body);
+  res.send({ success: true });
 });
 
 app.get("/", function (req, res) {
-  if (req.user) res.send({ user: "logged in" });
-  else res.send({ hello: "world" });
+  res.send({
+    "server up and running":
+      "check respective oauth paths for success messages",
+  });
 });
 
 // Check if route not present
@@ -76,4 +79,4 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server up at PORT`, PORT));
+app.listen(PORT, () => console.log(`🚀 Server up at PORT ${PORT}`));

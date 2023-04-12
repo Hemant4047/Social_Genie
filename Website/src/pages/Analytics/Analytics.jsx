@@ -22,18 +22,12 @@ function Analytics() {
             name="media"
           >
             <option value="instagram">Instagram</option>
-            <option value="youtube">Youtube</option>
+            {/* <option value="youtube">Youtube</option> */}
             <option value="facebook">Facebbok</option>
           </select>
         </form>
         <hr />
-        {media === "youtube" ? (
-          <YoutubeAnalytics />
-        ) : media === "instagram" ? (
-          <InstagramAnalytics />
-        ) : (
-          <FacebookAnalytics />
-        )}
+        {media === "instagram" ? <InstagramAnalytics /> : <FacebookAnalytics />}
       </div>
     </div>
   );

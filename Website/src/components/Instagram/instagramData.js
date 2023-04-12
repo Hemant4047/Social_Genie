@@ -7,31 +7,31 @@ import img5 from "../../assests/images/Instagram/instagram5.jpg";
 const data = [
   {
     post: img1,
-    likes: 12,
+    likes: 512,
     comments: 23,
     saves: 134,
   },
   {
     post: img2,
-    likes: 87,
-    comments: 233,
+    likes: 787,
+    comments: 80,
     saves: 9434,
   },
   {
     post: img3,
-    likes: 78,
+    likes: 878,
     comments: 345,
     saves: 245,
   },
   {
     post: img4,
-    likes: 86,
+    likes: 286,
     comments: 34,
     saves: 865,
   },
   {
     post: img5,
-    likes: 92,
+    likes: 392,
     comments: 52,
     saves: 342,
   },
