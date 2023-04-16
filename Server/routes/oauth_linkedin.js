@@ -5,6 +5,7 @@ const passport = require("passport");
 let LinkedinStrategy = require("passport-linkedin-oauth2").Strategy;
 var SQLiteStore = require("connect-sqlite3")(linkedin_session);
 const { default: axios, HttpStatusCode } = require("axios");
+const schedule = require("node-schedule");
 const FormData = require("form-data");
 const { getFormData } = require("../models/formData");
 
@@ -98,10 +99,7 @@ router.get("/user", function (req, res, next) {
   } else res.json({ user: null });
 });
 
-/* Only for text posts */
-/* /oauth/linkedin/postMessage */
-router.get("/postMessage", function (req, res, next) {
-  console.log("GET /oauth/linkedin/postMessage");
+const postMessage = function (req, res, next) {
   const accessToken = req.user.accessToken;
   let linkedin_id = null;
   let url = `https://api.linkedin.com/v2/me?oauth2_access_token=${accessToken}`;
@@ -134,15 +132,35 @@ router.get("/postMessage", function (req, res, next) {
       console.log("Linkedin POST Uploaded: ", response.data);
     })
     .catch((err) => {
-      console.error("ID FETCH Error", err);
+      console.error("LINKEDIN POST MESSAGE ERROR", err);
     });
+};
+
+/* Only for text posts */
+/* /oauth/linkedin/postMessage */
+router.get("/postMessage", function (req, res, next) {
+  console.log("GET /oauth/linkedin/postMessage");
+  postMessage(req, res, next);
   res.send("fin");
 });
 
-/* for both text and image */
-/* /oauth/linkedin/postLinkedin */
-router.get("/postLinkedin", function (req, res, next) {
-  console.log("GET /oauth/linkedin/postLinkedin");
+/* /oauth/linkedin/scheduleMessage */
+router.get("/scheduleMessage", function (req, res, next) {
+  console.log(
+    "GET /oauth/linkedin/scheduleMessage user exists: ",
+    req.user !== undefined
+  );
+  schedule.scheduleJob(getFormData().publishDate, () => {
+    console.log(
+      "posting to linkedin message only Now",
+      new Date().toLocaleString()
+    );
+    postMessage(req, res, next);
+  });
+  res.send("fin");
+});
+
+const post = function (req, res, next) {
   const accessToken = req.user.accessToken;
   let linkedin_id = null;
   let data = null;
@@ -228,14 +246,33 @@ router.get("/postLinkedin", function (req, res, next) {
       });
     })
     .then((response) => {
-      console.log("Posted on Linkedin");
-      console.log(response.data);
+      console.log("Posted on Linkedin", response.data);
     })
     .catch((err) => {
       console.error("linkedin POST error");
       console.log(err);
     });
+};
+
+/* for both text and image */
+/* /oauth/linkedin/postLinkedin */
+router.get("/postLinkedin", function (req, res, next) {
+  console.log("GET /oauth/linkedin/postLinkedin");
+  post(req, res, next);
   res.send("FIN");
+});
+
+/* /oauth/linkedin/schedulePost */
+router.get("/schedulePost", function (req, res, next) {
+  console.log(
+    "GET /oauth/linkedin/schedulePost user exists: ",
+    req.user !== undefined
+  );
+  schedule.scheduleJob(getFormData().publishDate, () => {
+    console.log("posting to linkedin Now", new Date().toLocaleString());
+    post(req, res, next);
+  });
+  res.send("fin");
 });
 
 module.exports = router;

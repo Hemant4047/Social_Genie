@@ -7,6 +7,7 @@ const { default: axios } = require("axios");
 const fs = require("fs");
 const crypto = require("crypto");
 const OAuth = require("oauth-1.0a");
+const schedule = require("node-schedule");
 const { getFormData } = require("../models/formData");
 
 let router = express.Router();
@@ -104,10 +105,7 @@ router.get("/user", function (req, res, next) {
   } else res.json({ user: null });
 });
 
-/* Only for text messages */
-/* /oauth/twitter/postMessage */
-router.get("/postMessage", function (req, res, next) {
-  console.log("GET /oauth/twitter/postMessage");
+const postMessage = function (req, res, next) {
   const accessToken = req.user.accessToken;
   const accessTokenSecret = req.user.accessTokenSecret;
   //   console.log("access token: ", accessToken);
@@ -170,7 +168,23 @@ router.get("/postMessage", function (req, res, next) {
   //   .catch((err) => {
   //     console.error("ERROR", err);
   //   });
+};
 
+/* Only for text messages */
+/* /oauth/twitter/postMessage */
+router.get("/postMessage", function (req, res, next) {
+  console.log("GET /oauth/twitter/postMessage");
+  postMessage(req, res, next);
+  res.send("FIN");
+});
+
+/* /oauth/twitter/scheduleMessage */
+router.get("/scheduleMessage", function (req, res, next) {
+  console.log("GET /oauth/twitter/scheduleMessage");
+  schedule.scheduleJob(getFormData().publishDate, () => {
+    console.log("posting to Twitter Now", new Date().toLocaleString());
+    postMessage(req, res, next);
+  });
   res.send("FIN");
 });
 

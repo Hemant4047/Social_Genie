@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 require("dotenv").config();
 const createError = require("http-errors");
-let { setFormData, setNewPhoto } = require("./models/formData");
+let { setFormCaption, setNewPhoto, setFormDate } = require("./models/formData");
 
 const fb_routeHandler = require("./routes/facebook/oauth_fb");
 const linkedin_routeHandler = require("./routes/oauth_linkedin");
@@ -50,8 +50,28 @@ app.post("/upload", upload.single("photo"), function (req, res, next) {
     setNewPhoto(false);
   }
 
+  let date = req.body["schedule-date"];
+  let time = req.body["schedule-time"];
+
+  if (date != "" && time != "") {
+    let splitDate = date.split("-");
+    let splitTime = time.split(":");
+    splitDate[1] = (Number(splitDate[1]) - 1).toString();
+    const publishDate = new Date(
+      splitDate[0],
+      splitDate[1],
+      splitDate[2],
+      splitTime[0],
+      splitTime[1]
+    );
+    setFormDate(publishDate);
+    console.log("POST /upload scheduled date", publishDate.toLocaleString());
+  } else {
+    console.log("POST /upload NOT scheduled");
+    setFormDate(null);
+  }
   console.log("POST /upload Form data: ", req.body);
-  setFormData(req.body);
+  setFormCaption(req.body.caption);
   res.send({ success: true });
 });
 

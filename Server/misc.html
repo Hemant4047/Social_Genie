@@ -10,6 +10,10 @@
     <form action="http://localhost:5000/upload" method="post" enctype="multipart/form-data">
         <input type="file" name="photo">
         <input type="text" name="caption">
+        <label for="schedule-date">Schedule Post:</label>
+        <input type="date" id="schedule-date" name="schedule-date" />
+        <input type="time" id="schedule-time" name="schedule-time"/>
+        <!-- <button id="scheduleButton">Schedule</button> -->
         <button type="submit" id="submitButton">Submit</button>
     </form>
     

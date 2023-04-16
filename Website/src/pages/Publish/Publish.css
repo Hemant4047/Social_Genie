@@ -120,7 +120,10 @@
   }
 
   .hide {
-    display: none;
+    /* display: none; */
+    /* visibility: hidden; */
+    position: fixed;
+    left: -9999px;
   }
 
   .disabledButton {
@@ -130,5 +133,29 @@
   .activeButton {
     background-color: #8000ff;
     cursor: pointer;
+  }
+
+  input[type="date"], input[type="time"] {
+    border: 2px solid #ccc;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 4px;
+    color: #0b0214;
+  }
+
+  #schedule_time {
+    margin-left: 2rem;
+  }
+
+  .time-picker {
+    margin: 1rem 0;
+  }
+
+  .schedule-label {
+    margin-right: 1rem
+  }
+
+  form p {
+    margin-top: 15px;
   }
   

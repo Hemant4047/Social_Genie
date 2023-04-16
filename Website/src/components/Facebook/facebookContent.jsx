@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import schedule from "node-schedule";
 import "../Instagram/instagramContent.css";
 import axios from "axios";
 
@@ -15,22 +16,34 @@ export default function FacebookContent() {
   const serverUrl = "http://localhost:5000";
 
   useEffect(() => {
-    console.log("Fetching the FB posts");
-    axios
-      .get(serverUrl + "/oauth/facebook/fetchAllFb", {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Credentials": true,
-        },
-        withCredentials: true,
-      })
-      .then((res) => {
-        setData(res.data.data);
-      })
-      .catch((err) => {
-        console.log("FB fetch error", err);
-      });
+    const fetch = function () {
+      console.log("Fetching the FB posts");
+      axios
+        .get(serverUrl + "/oauth/facebook/fetchAllFb", {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": true,
+          },
+          withCredentials: true,
+        })
+        .then((res) => {
+          setData(res.data.data);
+        })
+        .catch((err) => {
+          console.log("FB fetch error", err);
+        });
+    };
+    fetch();
+    console.log("Starting Facebook schedule every 15 seconds");
+    schedule.scheduleJob("*/15 * * * * *", function () {
+      console.log("Fetching FB data");
+      fetch();
+    });
+    return () => {
+      console.log("Shutting down FB schedule");
+      schedule.gracefulShutdown();
+    };
   }, []);
 
   return (

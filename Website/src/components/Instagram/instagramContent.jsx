@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./instagramContent.css";
 import axios from "axios";
+import schedule from "node-schedule";
 // import data from "./instagramData";
 
 const openInIg = function (link) {
@@ -14,22 +15,34 @@ export default function InstagramContent() {
   const serverUrl = "http://localhost:5000";
 
   useEffect(() => {
-    console.log("Fetching the IG posts");
-    axios
-      .get(serverUrl + "/oauth/facebook/fetchAllIg", {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Credentials": true,
-        },
-        withCredentials: true,
-      })
-      .then((res) => {
-        setData(res.data.data);
-      })
-      .catch((err) => {
-        console.log("IG fetch error", err);
-      });
+    const fetch = function () {
+      console.log("Fetching the IG posts");
+      axios
+        .get(serverUrl + "/oauth/facebook/fetchAllIg", {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": true,
+          },
+          withCredentials: true,
+        })
+        .then((res) => {
+          setData(res.data.data);
+        })
+        .catch((err) => {
+          console.log("IG fetch error", err);
+        });
+    };
+    fetch();
+    console.log("Starting IG schedule every 15 seconds");
+    schedule.scheduleJob("*/15 * * * * *", function () {
+      // console.log("IG scheduled every 15 seconds");
+      fetch();
+    });
+    return () => {
+      console.log("Shutting down IG Schedule");
+      schedule.gracefulShutdown();
+    };
   }, []);
 
   return (

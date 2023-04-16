@@ -1,11 +1,16 @@
 let formData = {
-  caption: "posted from social genie's Server!",
+  caption: "post scheduled from social genie's Server!",
+  publishDate: null,
 };
 
 let newPhotoUploaded = false;
 
-function setFormData(obj) {
-  formData = obj;
+function setFormCaption(str) {
+  formData.caption = str;
+}
+
+function setFormDate(date) {
+  formData.publishDate = date;
 }
 
 function getFormData() {
@@ -20,7 +25,8 @@ function getNewPhotoUploaded() {
   return newPhotoUploaded;
 }
 
-exports.setFormData = setFormData;
+exports.setFormCaption = setFormCaption;
+exports.setFormDate = setFormDate;
 exports.getFormData = getFormData;
 exports.setNewPhoto = setNewPhoto;
 exports.getNewPhotoUploaded = getNewPhotoUploaded;
