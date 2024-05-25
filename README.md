@@ -1,7 +1,7 @@
-original README.md file is README_og.md
+Social Genie is a all in one platform for social media. Post, schedule, view stats of your posts over all of the social media apps from one place.
+It currently has support for Facebook, Instagram, Linkedin and Twitter
 
-Refer original README_og.md for git cloning steps.
-
+How to Launch
 1. Website folder has the frontend and Server folder has the backend
 2. Both backend and frontend run on separate ports.
    Backend: "http://localhost:5000"
